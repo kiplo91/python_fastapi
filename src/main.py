@@ -14,7 +14,7 @@ app = FastAPI()
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
-    "http://localhost",
+    "http://localhost:4200",
     "http://localhost:8080",
 ]
 
@@ -36,7 +36,7 @@ def customers(session:Session = Depends(get_session)):
     result = session.exec(stmt).all()
     return result
 
-@app.post('/customer/register')
+@app.post('/customer/register',response_model=Customer,status_code=201)
 def register(customer:CustomerModel,session:Session = Depends(get_session)):
     session.add(customer)
     session.commit()
@@ -51,14 +51,14 @@ def view(id:int,response:Response,session:Session = Depends(get_session)):
         return "Customer Not Found"
     return customer
 
-@app.put('/customer/{id}')
+@app.put('/customer/{id}',response_model=Union[Customer,str])
 def edit( updated_customer: Customer,id:int,response:Response,session:Session=Depends(get_session)):
     customer = session.get(CustomerModel,id)
 
     #check if trac exist
     if customer is None:
         response.status_code=404
-        return "Track Not Found"
+        return "Customer Not Found"
 
     #update track data
     customer_dict = updated_customer.dict(exclude_unset=True)
