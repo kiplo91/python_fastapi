@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from database import  CustomerModel,engine
 from sqlmodel import Session,select
 from models import Customer
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
